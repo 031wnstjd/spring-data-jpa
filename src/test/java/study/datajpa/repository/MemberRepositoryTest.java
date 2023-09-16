@@ -229,12 +229,36 @@ class MemberRepositoryTest {
         // when
         List<Member> members = memberRepository.findEntityGraphByUsername("member1");
 
+        // then
         for (Member member : members) {
             System.out.println("member = " + member.getUsername());
             System.out.println("member.teamClass = " + member.getTeam().getClass());
             System.out.println("member.team = " + member.getTeam().getName());
         }
-        
-        // then
+    }
+
+    @Test
+    public void queryHint() throws Exception {
+        // given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+
+        // when
+        Member findMember = memberRepository.findReadOnlyByUsername("member1");
+        findMember.setUsername("member2");
+
+        em.flush();
+    }
+
+    @Test
+    public void lock() throws Exception {
+        // given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+
+        // when
+        Member result = memberRepository.findLockByUsername("member1");
     }
 }
